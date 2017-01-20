@@ -80,6 +80,15 @@ class Model(object):
 
     softmax_w = tf.get_variable("softmax_w", [2 * size , tag_vocab_size],
                                 dtype=data_type())
+    # Wang et al. 
+    # w = tf.get_variable("w", [2 * size, size], dtype=data_type())
+    # b = tf.get_variable("b", [size], dtype=data_type())
+    # output = tf.nn.tanh(tf.matmul(output, w) + b)
+    # if is_training and config.keep_prob < 1:
+    #   output = tf.nn.dropout(output, config.keep_prob)
+
+    # softmax_w = tf.get_variable("softmax_w", [size , tag_vocab_size],
+    #                             dtype=data_type())
     softmax_b = tf.get_variable("softmax_b", [tag_vocab_size],
                                 dtype=data_type())
 
@@ -107,8 +116,8 @@ class Model(object):
     grads, _ = tf.clip_by_global_norm(
       tf.gradients(self._cost, tvars), config.max_grad_norm)
     # optimizer = tf.train.GradientDescentOptimizer(self.lr)
-    # optimizer = tf.train.AdamOptimizer(self.lr)
-    optimizer = tf.train.MomentumOptimizer(self.lr, 0.95)
+    optimizer = tf.train.AdamOptimizer(self.lr)
+    # optimizer = tf.train.MomentumOptimizer(self.lr, 0.95)
     self._train_op = optimizer.apply_gradients(zip(grads, tvars))
 
   def assign_lr(self, session, lr_value):
